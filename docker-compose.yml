@@ -1,0 +1,21 @@
+version: '3.4'
+
+services:
+  contactapi:
+    image: ${DOCKER_REGISTRY-}contactapi
+    build:
+      context: .
+      dockerfile: ContactApi/Dockerfile
+    ports:
+      - "5001:80"
+    depends_on:
+      - contactdb
+
+  contactdb:
+    image: postgres:latest
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=contactdb
+    ports:
+      - "5432:5432"
