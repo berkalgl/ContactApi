@@ -2,10 +2,15 @@
 ###
 - Used Technologies
 ● .Net 7
+
 ● PostgreSQL
+
 ● EntityFrameworkCore
+
 ● Npgsql
+
 ● FluentValidation
+
 ● Swagger
 
 ### Description
@@ -13,9 +18,13 @@
 - The Service should provide a Rest API.
 - This API should have following Methods:
 ● Creating a Contact
+
 ● Updating an existing Contact
+
 ● Deleting an existing Contact
+
 ● Reading one Contact by a given id
+
 ● Reading all Contacts.
 
 - To store the Contacts the Service should use a Postgresql Database.
