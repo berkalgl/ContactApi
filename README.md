@@ -1,6 +1,7 @@
 # ContactApi
 ###
 - Used Technologies
+
 ● .Net 7
 
 ● PostgreSQL
@@ -17,6 +18,7 @@
 - Develop an API Service in c# dotnet 6 which manages contacts.
 - The Service should provide a Rest API.
 - This API should have following Methods:
+
 ● Creating a Contact
 
 ● Updating an existing Contact
