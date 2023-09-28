@@ -1,10 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 
-namespace ContactApi.Filters
+namespace ContactApi.Exceptions
 {
     public class ProblemDetailsException : Exception
     {
-        public ProblemDetailsException(ProblemDetails problemDetails) 
+        public ProblemDetailsException(ProblemDetails problemDetails)
         {
             Value = problemDetails;
         }

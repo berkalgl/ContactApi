@@ -1,6 +1,6 @@
 using ContactApi.Data;
 using ContactApi.Data.Entities;
-using ContactApi.Filters;
+using ContactApi.Exceptions;
 using ContactApi.V1.Models.Requests;
 using ContactApi.V1.Models.Responses;
 using FluentValidation;
@@ -35,7 +35,7 @@ namespace ContactApi.V1.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ProblemDetails))]
         [ProducesResponseType(StatusCodes.Status409Conflict, Type = typeof(ProblemDetails))]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> Create([FromBody] CreateContactRequestModel request)
+        public async Task<IActionResult> Post([FromBody] CreateContactRequestModel request)
         {
             ValidationResult validationResult = await _createContactRequestModelValidator.ValidateAsync(request);
 
@@ -76,10 +76,7 @@ namespace ContactApi.V1.Controllers
         {
             Contact contact = await _dbContext.Contacts.FirstOrDefaultAsync(c => c.Id.Equals(id));
 
-            if (contact is null)
-            {
-                return NotFound();
-            }
+            ThrowExceptionIfContactNotFound(contact);
 
             ContactResponseModel response = GetContactResponseModel(contact);
 
@@ -109,7 +106,7 @@ namespace ContactApi.V1.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ProblemDetails))]
         [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(ProblemDetails))]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> Update([FromRoute] int id, [FromBody] UpdateContactRequestModel request)
+        public async Task<IActionResult> Put([FromRoute] int id, [FromBody] UpdateContactRequestModel request)
         {
             ValidationResult validationResult = await _updateContactRequestModelValidator.ValidateAsync(request);
 
@@ -117,16 +114,7 @@ namespace ContactApi.V1.Controllers
 
             Contact contact = await _dbContext.Contacts.FirstOrDefaultAsync(c => c.Id.Equals(id));
 
-            if (contact is null)
-            {
-                throw new ProblemDetailsException(new ProblemDetails
-                {
-                    Type = "https://tools.ietf.org/html/rfc7231#section-6.5.4",
-                    Title = "Contact could not be found to update",
-                    Status = StatusCodes.Status404NotFound,
-                    Detail = "Contact could not be found to update",
-                });
-            }
+            ThrowExceptionIfContactNotFound(contact);
 
             Contact existContact = await _dbContext.Contacts.FirstOrDefaultAsync(c => c.Email.Equals(request.Email) && c.Id != contact.Id);
 
@@ -152,12 +140,27 @@ namespace ContactApi.V1.Controllers
             return NoContent();
         }
 
+        private static void ThrowExceptionIfContactNotFound(Contact contact)
+        {
+            if (contact is null)
+            {
+                throw new ProblemDetailsException(new ProblemDetails
+                {
+                    Type = "https://tools.ietf.org/html/rfc7231#section-6.5.4",
+                    Title = "Contact could not be found",
+                    Status = StatusCodes.Status404NotFound,
+                    Detail = "Contact could not be found",
+                });
+            }
+        }
+
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ContactResponseModel))]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetAll()
         {
             IEnumerable<ContactResponseModel> response = await _dbContext.Contacts
+                .AsNoTracking()
                 .Select(c => GetContactResponseModel(c))
                 .ToListAsync();
 

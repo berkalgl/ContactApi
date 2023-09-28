@@ -1,9 +1,10 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using ContactApi.Exceptions;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 
 namespace ContactApi.Filters
 {
-    public class GlobalExceptionFilter : IActionFilter
+    public class ProblemDetailsExceptionFilter : IActionFilter
     {
         public void OnActionExecuted(ActionExecutedContext context)
         {

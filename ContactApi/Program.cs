@@ -22,7 +22,7 @@ builder.Services.AddVersionedApiExplorer(options =>
 builder.Services.AddHttpContextAccessor();
 
 builder.Services
-    .AddControllers(options => options.Filters.Add(new GlobalExceptionFilter()))
+    .AddControllers(options => options.Filters.Add(new ProblemDetailsExceptionFilter()))
     .AddJsonOptions(options =>
     {
         options.JsonSerializerOptions.DictionaryKeyPolicy = JsonNamingPolicy.CamelCase;
@@ -68,6 +68,10 @@ if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
+}
+else
+{
+    app.UseExceptionHandler("/error");
 }
 
 app.MapControllers();
