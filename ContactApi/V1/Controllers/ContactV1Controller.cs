@@ -140,20 +140,6 @@ namespace ContactApi.V1.Controllers
             return NoContent();
         }
 
-        private static void ThrowExceptionIfContactNotFound(Contact contact)
-        {
-            if (contact is null)
-            {
-                throw new ProblemDetailsException(new ProblemDetails
-                {
-                    Type = "https://tools.ietf.org/html/rfc7231#section-6.5.4",
-                    Title = "Contact could not be found",
-                    Status = StatusCodes.Status404NotFound,
-                    Detail = "Contact could not be found",
-                });
-            }
-        }
-
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ContactResponseModel))]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -168,6 +154,20 @@ namespace ContactApi.V1.Controllers
         }
 
         #region Private Methods
+
+        private static void ThrowExceptionIfContactNotFound(Contact contact)
+        {
+            if (contact is null)
+            {
+                throw new ProblemDetailsException(new ProblemDetails
+                {
+                    Type = "https://tools.ietf.org/html/rfc7231#section-6.5.4",
+                    Title = "Contact could not be found",
+                    Status = StatusCodes.Status404NotFound,
+                    Detail = "Contact could not be found",
+                });
+            }
+        }
 
         private static void ThrowExceptionIfContactExistWithEmail(Contact existContact)
         {
